@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Fitness Account Card</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --page-background: #0b0c0c;
+      --panel-background: rgba(20, 21, 21, 0.9);
+      --panel-border: rgba(255, 255, 255, 0.07);
+
+      --text-primary: #f3efe7;
+      --text-secondary: #b7b0a4;
+      --text-muted: #817c74;
+
+      --accent-light: #d2b178;
+      --accent: #af8952;
+      --accent-dark: #725934;
+
+      --input-background: rgba(255, 255, 255, 0.035);
+      --input-border: rgba(255, 255, 255, 0.08);
+
+      --shadow:
+        0 24px 70px
+        rgba(0, 0, 0, 0.48);
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--page-background);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+
+      color: var(--text-primary);
+
+      font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 8% 5%,
+          rgba(128, 109, 77, 0.2) 0%,
+          rgba(128, 109, 77, 0) 25%
+        ),
+        radial-gradient(
+          circle at 94% 92%,
+          rgba(79, 65, 44, 0.18) 0%,
+          rgba(79, 65, 44, 0) 24%
+        ),
+        linear-gradient(
+          140deg,
+          #080909 0%,
+          #141616 45%,
+          #090a0a 100%
+        );
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1380px;
+      margin: 0 auto;
+
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 24px;
+
+      align-items: start;
+    }
+
+    .panel {
+      border:
+        1px solid
+        var(--panel-border);
+
+      border-radius: 24px;
+
+      background:
+        var(--panel-background);
+
+      box-shadow:
+        var(--shadow);
+
+      backdrop-filter:
+        blur(14px);
+
+      -webkit-backdrop-filter:
+        blur(14px);
+    }
+
+    .controls {
+      padding: 28px;
+    }
+
+    .eyebrow {
+      margin-bottom: 12px;
+
+      color:
+        var(--accent-light);
+
+      font-size: 0.74rem;
+      font-weight: 800;
+
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .controls h1 {
+      margin: 0 0 14px;
+
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+    }
+
+    .controls-introduction {
+      margin: 0 0 26px;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+
+      margin-bottom: 9px;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 0.76rem;
+      font-weight: 800;
+
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+
+      padding: 15px 16px;
+
+      border:
+        1px solid
+        var(--input-border);
+
+      border-radius: 14px;
+
+      outline: none;
+
+      background:
+        var(--input-background);
+
+      color:
+        var(--text-primary);
+
+      font-family: inherit;
+      font-size: 1rem;
+
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .field input::placeholder {
+      color: #68645f;
+    }
+
+    .field input:focus {
+      border-color:
+        rgba(175, 137, 82, 0.9);
+
+      background:
+        rgba(255, 255, 255, 0.055);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(175, 137, 82, 0.15);
+    }
+
+    .button-row {
+      display: grid;
+      gap: 12px;
+
+      margin-top: 24px;
+    }
+
+    button {
+      width: 100%;
+
+      padding: 15px 18px;
+
+      border: none;
+      border-radius: 14px;
+
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform:
+        translateY(-1px);
+    }
+
+    button:active:not(:disabled) {
+      transform:
+        translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .primary-btn {
+      color: #14110d;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent-light),
+          var(--accent)
+        );
+
+      box-shadow:
+        0 14px 32px
+        rgba(175, 137, 82, 0.2);
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      box-shadow:
+        0 16px 38px
+        rgba(175, 137, 82, 0.28);
+    }
+
+    .secondary-btn {
+      color:
+        var(--text-primary);
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+      background:
+        rgba(255, 255, 255, 0.05);
+    }
+
+    .secondary-btn:hover:not(:disabled) {
+      background:
+        rgba(255, 255, 255, 0.075);
+    }
+
+    .account-information {
+      margin-top: 22px;
+    }
+
+    .account-box {
+      padding: 16px;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.065);
+
+      border-radius: 16px;
+
+      background:
+        rgba(255, 255, 255, 0.028);
+    }
+
+    .account-label {
+      margin-bottom: 9px;
+
+      color:
+        var(--text-muted);
+
+      font-size: 0.72rem;
+      font-weight: 800;
+
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .account-value {
+      color:
+        var(--text-primary);
+
+      font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+      font-size: 0.91rem;
+      line-height: 1.55;
+
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .note {
+      margin-top: 18px;
+
+      color:
+        var(--text-muted);
+
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .preview {
+      min-width: 0;
+      padding: 22px;
+    }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+
+      margin-bottom: 16px;
+    }
+
+    .preview h2 {
+      margin: 0;
+
+      color:
+        var(--text-primary);
+
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .preview-ratio {
+      color:
+        var(--text-muted);
+
+      font-size: 0.78rem;
+      font-weight: 700;
+
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .canvas-wrap {
+      width: 100%;
+      padding: 18px;
+
+      overflow: hidden;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.055);
+
+      border-radius: 20px;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.018),
+          rgba(255, 255, 255, 0.008)
+        );
+    }
+
+    canvas {
+      display: block;
+
+      width: 100%;
+      max-width: 450px;
+      height: auto;
+
+      margin: 0 auto;
+
+      border-radius: 22px;
+
+      background: transparent;
+
+      box-shadow:
+        0 18px 48px
+        rgba(0, 0, 0, 0.32);
+    }
+
+    @media (max-width: 1000px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        max-width: 680px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .controls,
+      .preview {
+        padding: 17px;
+      }
+
+      .controls h1 {
+        font-size: 1.75rem;
+      }
+
+      .canvas-wrap {
+        padding: 10px;
+      }
+
+      .preview-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <section class="panel controls">
+
+      <div class="eyebrow">
+        Digital Fitness Access
+      </div>
+
+      <h1>
+        Create Your Fitness Card
+      </h1>
+
+      <p class="controls-introduction">
+        Generate a personal card that can be saved
+        directly to your phone and scanned when using
+        supported fitness equipment.
+      </p>
+
+      <div class="field">
+        <label for="firstName">
+          First Name
+        </label>
+
+        <input
+          id="firstName"
+          type="text"
+          maxlength="40"
+          placeholder="Robert"
+          autocomplete="given-name"
+        />
+      </div>
+
+      <div class="field">
+        <label for="lastName">
+          Last Name
+        </label>
+
+        <input
+          id="lastName"
+          type="text"
+          maxlength="60"
+          placeholder="Wong"
+          autocomplete="family-name"
+        />
+      </div>
+
+      <div class="button-row">
+
+        <button
+          id="generateBtn"
+          class="primary-btn"
+          type="button"
+        >
+          Generate Fitness Card
+        </button>
+
+        <button
+          id="downloadBtn"
+          class="secondary-btn"
+          type="button"
+          disabled
+        >
+          Download to Device
+        </button>
+
+      </div>
+
+      <div class="account-information">
+
+        <div class="account-box">
+
+          <div class="account-label">
+            Account ID
+          </div>
+
+          <div
+            id="accountIdText"
+            class="account-value"
+          >
+            Not generated yet
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="note">
+        Store the downloaded image somewhere easy to
+        access, such as your phone’s photos or favourites.
+      </div>
+
+    </section>
+
+    <section class="panel preview">
+
+      <div class="preview-header">
+
+        <h2>
+          Card Preview
+        </h2>
+
+        <div class="preview-ratio">
+          Portrait · 1080 × 1920
+        </div>
+
+      </div>
+
+      <div class="canvas-wrap">
+
+        <canvas
+          id="cardCanvas"
+          width="1080"
+          height="1920"
+        ></canvas>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const firstNameInput =
+      document.getElementById("firstName");
+
+    const lastNameInput =
+      document.getElementById("lastName");
+
+    const generateBtn =
+      document.getElementById("generateBtn");
+
+    const downloadBtn =
+      document.getElementById("downloadBtn");
+
+    const accountIdText =
+      document.getElementById("accountIdText");
+
+    const canvas =
+      document.getElementById("cardCanvas");
+
+    const ctx =
+      canvas.getContext("2d");
+
+    let currentCard = null;
+
+    function capitalizeWords(value) {
+      return value
+        .trim()
+        .split(/\s+/)
+        .map(word => {
+          return (
+            word.charAt(0).toUpperCase() +
+            word.slice(1).toLowerCase()
+          );
+        })
+        .join(" ");
+    }
+
+    function generateSecureAccountId() {
+      const bytes =
+        new Uint8Array(12);
+
+      crypto.getRandomValues(bytes);
+
+      const hexadecimalValue =
+        Array.from(bytes)
+          .map(byte => {
+            return byte
+              .toString(16)
+              .padStart(2, "0");
+          })
+          .join("")
+          .toUpperCase();
+
+      const groups =
+        hexadecimalValue.match(/.{1,4}/g) || [];
+
+      return (
+        "FC-" +
+        groups.join("-")
+      );
+    }
+
+function buildQrPayload(accountId) {
+  return accountId;
+}
+
+    function formatMemberSince(date) {
+      return date.toLocaleDateString(
+        undefined,
+        {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        }
+      );
+    }
+
+    function roundRectPath(
+      context,
+      x,
+      y,
+      width,
+      height,
+      radius
+    ) {
+      const adjustedRadius =
+        Math.min(
+          radius,
+          width / 2,
+          height / 2
+        );
+
+      context.beginPath();
+
+      context.moveTo(
+        x + adjustedRadius,
+        y
+      );
+
+      context.lineTo(
+        x + width - adjustedRadius,
+        y
+      );
+
+      context.quadraticCurveTo(
+        x + width,
+        y,
+        x + width,
+        y + adjustedRadius
+      );
+
+      context.lineTo(
+        x + width,
+        y + height - adjustedRadius
+      );
+
+      context.quadraticCurveTo(
+        x + width,
+        y + height,
+        x + width - adjustedRadius,
+        y + height
+      );
+
+      context.lineTo(
+        x + adjustedRadius,
+        y + height
+      );
+
+      context.quadraticCurveTo(
+        x,
+        y + height,
+        x,
+        y + height - adjustedRadius
+      );
+
+      context.lineTo(
+        x,
+        y + adjustedRadius
+      );
+
+      context.quadraticCurveTo(
+        x,
+        y,
+        x + adjustedRadius,
+        y
+      );
+
+      context.closePath();
+    }
+
+    function fillRoundRect(
+      context,
+      x,
+      y,
+      width,
+      height,
+      radius,
+      fillStyle
+    ) {
+      context.save();
+
+      roundRectPath(
+        context,
+        x,
+        y,
+        width,
+        height,
+        radius
+      );
+
+      context.fillStyle =
+        fillStyle;
+
+      context.fill();
+
+      context.restore();
+    }
+
+    function strokeRoundRect(
+      context,
+      x,
+      y,
+      width,
+      height,
+      radius,
+      strokeStyle,
+      lineWidth = 1
+    ) {
+      context.save();
+
+      roundRectPath(
+        context,
+        x,
+        y,
+        width,
+        height,
+        radius
+      );
+
+      context.strokeStyle =
+        strokeStyle;
+
+      context.lineWidth =
+        lineWidth;
+
+      context.stroke();
+
+      context.restore();
+    }
+
+    function drawRadialGlow(
+      x,
+      y,
+      radius,
+      color,
+      alpha
+    ) {
+      ctx.save();
+
+      ctx.globalAlpha =
+        alpha;
+
+      const gradient =
+        ctx.createRadialGradient(
+          x,
+          y,
+          0,
+          x,
+          y,
+          radius
+        );
+
+      gradient.addColorStop(
+        0,
+        color
+      );
+
+      gradient.addColorStop(
+        1,
+        "rgba(255,255,255,0)"
+      );
+
+      ctx.fillStyle =
+        gradient;
+
+      ctx.beginPath();
+
+      ctx.arc(
+        x,
+        y,
+        radius,
+        0,
+        Math.PI * 2
+      );
+
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function fitText(
+      context,
+      text,
+      maxWidth,
+      startingFontSize,
+      minimumFontSize,
+      fontWeight = 700,
+      fontFamily =
+        '"Segoe UI", Arial, sans-serif'
+    ) {
+      let fontSize =
+        startingFontSize;
+
+      while (
+        fontSize > minimumFontSize
+      ) {
+        context.font =
+          `${fontWeight} ${fontSize}px ${fontFamily}`;
+
+        const measuredWidth =
+          context
+            .measureText(text)
+            .width;
+
+        if (
+          measuredWidth <= maxWidth
+        ) {
+          break;
+        }
+
+        fontSize -= 1;
+      }
+
+      return fontSize;
+    }
+
+    function drawCenteredFittedText(
+      text,
+      x,
+      y,
+      maxWidth,
+      startingFontSize,
+      minimumFontSize,
+      fontWeight,
+      color,
+      fontFamily =
+        '"Segoe UI", Arial, sans-serif'
+    ) {
+      const fontSize =
+        fitText(
+          ctx,
+          text,
+          maxWidth,
+          startingFontSize,
+          minimumFontSize,
+          fontWeight,
+          fontFamily
+        );
+
+      ctx.fillStyle =
+        color;
+
+      ctx.font =
+        `${fontWeight} ${fontSize}px ${fontFamily}`;
+
+      ctx.textAlign =
+        "center";
+
+      ctx.textBaseline =
+        "alphabetic";
+
+      ctx.fillText(
+        text,
+        x,
+        y
+      );
+    }
+
+    function drawCard(
+      firstName,
+      lastName,
+      accountId,
+      createdAt,
+      qrPayload
+    ) {
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      const canvasWidth =
+        canvas.width;
+
+      const canvasHeight =
+        canvas.height;
+
+      const displayFirstName =
+        capitalizeWords(
+          firstName || "Your"
+        );
+
+      const displayLastName =
+        capitalizeWords(
+          lastName || "Name"
+        );
+
+      const displayName =
+        `${displayFirstName} ${displayLastName}`;
+
+      const memberSince =
+        formatMemberSince(
+          createdAt
+        );
+
+      /*
+       * Canvas background
+       */
+
+      const backgroundGradient =
+        ctx.createLinearGradient(
+          0,
+          0,
+          canvasWidth,
+          canvasHeight
+        );
+
+      backgroundGradient.addColorStop(
+        0,
+        "#080909"
+      );
+
+      backgroundGradient.addColorStop(
+        0.48,
+        "#141616"
+      );
+
+      backgroundGradient.addColorStop(
+        1,
+        "#080909"
+      );
+
+      ctx.fillStyle =
+        backgroundGradient;
+
+      ctx.fillRect(
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
+
+      drawRadialGlow(
+        150,
+        220,
+        330,
+        "#756344",
+        0.16
+      );
+
+      drawRadialGlow(
+        970,
+        1670,
+        390,
+        "#504029",
+        0.15
+      );
+
+      /*
+       * Main card
+       */
+
+      const cardX = 88;
+      const cardY = 105;
+      const cardWidth = 904;
+      const cardHeight = 1710;
+      const cardRadius = 54;
+
+      ctx.save();
+
+      ctx.shadowColor =
+        "rgba(0,0,0,0.48)";
+
+      ctx.shadowBlur = 50;
+      ctx.shadowOffsetY = 24;
+
+      fillRoundRect(
+        ctx,
+        cardX,
+        cardY,
+        cardWidth,
+        cardHeight,
+        cardRadius,
+        "#141616"
+      );
+
+      ctx.restore();
+
+      ctx.save();
+
+      roundRectPath(
+        ctx,
+        cardX,
+        cardY,
+        cardWidth,
+        cardHeight,
+        cardRadius
+      );
+
+      ctx.clip();
+
+      const cardGradient =
+        ctx.createLinearGradient(
+          cardX,
+          cardY,
+          cardX,
+          cardY + cardHeight
+        );
+
+      cardGradient.addColorStop(
+        0,
+        "#1c1e1e"
+      );
+
+      cardGradient.addColorStop(
+        0.42,
+        "#151717"
+      );
+
+      cardGradient.addColorStop(
+        1,
+        "#101111"
+      );
+
+      ctx.fillStyle =
+        cardGradient;
+
+      ctx.fillRect(
+        cardX,
+        cardY,
+        cardWidth,
+        cardHeight
+      );
+
+      /*
+       * Subtle warm lighting only.
+       * This is not a logo or icon.
+       */
+
+      const topLighting =
+        ctx.createLinearGradient(
+          cardX,
+          cardY,
+          cardX + cardWidth,
+          cardY + 340
+        );
+
+      topLighting.addColorStop(
+        0,
+        "rgba(205,169,111,0.16)"
+      );
+
+      topLighting.addColorStop(
+        0.35,
+        "rgba(205,169,111,0.045)"
+      );
+
+      topLighting.addColorStop(
+        0.72,
+        "rgba(255,255,255,0.012)"
+      );
+
+      topLighting.addColorStop(
+        1,
+        "rgba(255,255,255,0)"
+      );
+
+      ctx.fillStyle =
+        topLighting;
+
+      ctx.fillRect(
+        cardX,
+        cardY,
+        cardWidth,
+        400
+      );
+
+      drawRadialGlow(
+        250,
+        370,
+        360,
+        "#8d7047",
+        0.08
+      );
+
+      drawRadialGlow(
+        875,
+        1430,
+        430,
+        "#6b5536",
+        0.055
+      );
+
+      ctx.restore();
+
+      strokeRoundRect(
+        ctx,
+        cardX,
+        cardY,
+        cardWidth,
+        cardHeight,
+        cardRadius,
+        "rgba(255,255,255,0.075)",
+        1.5
+      );
+
+      /*
+       * Small premium accent line
+       */
+
+      fillRoundRect(
+        ctx,
+        445,
+        190,
+        190,
+        8,
+        4,
+        "#b9935b"
+      );
+
+      /*
+       * Name section
+       */
+
+      ctx.fillStyle =
+        "#aaa397";
+
+      ctx.font =
+        '800 24px "Segoe UI", Arial, sans-serif';
+
+      ctx.textAlign =
+        "center";
+
+      ctx.textBaseline =
+        "alphabetic";
+
+      ctx.fillText(
+        "PERSONAL FITNESS CARD",
+        540,
+        300
+      );
+
+      drawCenteredFittedText(
+        displayName,
+        540,
+        445,
+        730,
+        86,
+        44,
+        700,
+        "#f3efe7"
+      );
+
+      ctx.fillStyle =
+        "#9d978d";
+
+      ctx.font =
+        '500 28px "Segoe UI", Arial, sans-serif';
+
+      ctx.fillText(
+        "Your results. Your progress.",
+        540,
+        510
+      );
+
+      fillRoundRect(
+        ctx,
+        250,
+        575,
+        580,
+        2,
+        1,
+        "rgba(255,255,255,0.08)"
+      );
+
+      /*
+       * Account details
+       */
+
+      const detailX = 150;
+      const detailWidth = 780;
+
+      fillRoundRect(
+        ctx,
+        detailX,
+        645,
+        detailWidth,
+        166,
+        32,
+        "rgba(255,255,255,0.032)"
+      );
+
+      strokeRoundRect(
+        ctx,
+        detailX,
+        645,
+        detailWidth,
+        166,
+        32,
+        "rgba(255,255,255,0.052)",
+        1.2
+      );
+
+      ctx.fillStyle =
+        "#8f897f";
+
+      ctx.font =
+        '800 23px "Segoe UI", Arial, sans-serif';
+
+      ctx.textAlign =
+        "left";
+
+      ctx.fillText(
+        "ACCOUNT ID",
+        194,
+        705
+      );
+
+      const accountFontSize =
+        fitText(
+          ctx,
+          accountId,
+          690,
+          42,
+          25,
+          700,
+          'Consolas, "Courier New", monospace'
+        );
+
+      ctx.fillStyle =
+        "#f3efe7";
+
+      ctx.font =
+        `700 ${accountFontSize}px Consolas, "Courier New", monospace`;
+
+      ctx.fillText(
+        accountId,
+        194,
+        772
+      );
+
+      fillRoundRect(
+        ctx,
+        detailX,
+        840,
+        detailWidth,
+        166,
+        32,
+        "rgba(255,255,255,0.032)"
+      );
+
+      strokeRoundRect(
+        ctx,
+        detailX,
+        840,
+        detailWidth,
+        166,
+        32,
+        "rgba(255,255,255,0.052)",
+        1.2
+      );
+
+      ctx.fillStyle =
+        "#8f897f";
+
+      ctx.font =
+        '800 23px "Segoe UI", Arial, sans-serif';
+
+      ctx.fillText(
+        "MEMBER SINCE",
+        194,
+        900
+      );
+
+      const dateFontSize =
+        fitText(
+          ctx,
+          memberSince,
+          690,
+          44,
+          30,
+          600
+        );
+
+      ctx.fillStyle =
+        "#f3efe7";
+
+      ctx.font =
+        `600 ${dateFontSize}px "Segoe UI", Arial, sans-serif`;
+
+      ctx.fillText(
+        memberSince,
+        194,
+        969
+      );
+
+      /*
+       * QR section
+       */
+
+      const qrPanelX = 150;
+      const qrPanelY = 1055;
+      const qrPanelWidth = 780;
+      const qrPanelHeight = 615;
+
+      fillRoundRect(
+        ctx,
+        qrPanelX,
+        qrPanelY,
+        qrPanelWidth,
+        qrPanelHeight,
+        40,
+        "#f2eee6"
+      );
+
+      ctx.fillStyle =
+        "#181818";
+
+      ctx.font =
+        '800 29px "Segoe UI", Arial, sans-serif';
+
+      ctx.textAlign =
+        "center";
+
+      ctx.fillText(
+        "SCAN TO ACCESS YOUR ACCOUNT",
+        540,
+        1128
+      );
+
+      const qr =
+        new QRious({
+          value: qrPayload,
+          size: 760,
+          level: "H",
+          background: "white",
+          foreground: "black"
+        });
+
+      const qrSize = 410;
+
+      const qrX =
+        540 - qrSize / 2;
+
+      const qrY =
+        1170;
+
+      ctx.drawImage(
+        qr.canvas,
+        qrX,
+        qrY,
+        qrSize,
+        qrSize
+      );
+
+      ctx.fillStyle =
+        "#676159";
+
+      ctx.font =
+        '500 27px "Segoe UI", Arial, sans-serif';
+
+      ctx.fillText(
+        "Present this code at supported fitness equipment",
+        540,
+        1625
+      );
+    }
+
+    function drawPlaceholderCard() {
+      const placeholderDate =
+        new Date();
+
+      const placeholderAccountId =
+        "FC-DEMO-0001-0002-0003";
+
+      const placeholderPayload =
+        buildQrPayload(
+          placeholderAccountId,
+          placeholderDate.toISOString()
+        );
+
+      drawCard(
+        "Your",
+        "Name",
+        placeholderAccountId,
+        placeholderDate,
+        placeholderPayload
+      );
+    }
+
+    function generateCard() {
+      const firstName =
+        firstNameInput
+          .value
+          .trim();
+
+      const lastName =
+        lastNameInput
+          .value
+          .trim();
+
+      if (
+        !firstName ||
+        !lastName
+      ) {
+        alert(
+          "Please enter both a first name and last name."
+        );
+
+        return;
+      }
+
+      const createdAt =
+        new Date();
+
+      const accountId =
+        generateSecureAccountId();
+
+      const qrPayload =
+        buildQrPayload(
+          accountId,
+          createdAt.toISOString()
+        );
+
+      currentCard = {
+        firstName,
+        lastName,
+        accountId,
+        qrPayload,
+        createdAt
+      };
+
+      accountIdText.textContent =
+        accountId;
+
+      drawCard(
+        firstName,
+        lastName,
+        accountId,
+        createdAt,
+        qrPayload
+      );
+
+      downloadBtn.disabled =
+        false;
+    }
+
+    function downloadCard() {
+      if (!currentCard) {
+        return;
+      }
+
+      const safeName =
+        `${currentCard.firstName}-${currentCard.lastName}`
+          .toLowerCase()
+          .replace(
+            /[^a-z0-9]+/g,
+            "-"
+          )
+          .replace(
+            /^-+|-+$/g,
+            ""
+          );
+
+      const downloadLink =
+        document.createElement("a");
+
+      downloadLink.download =
+        `fitness-card-${safeName || "member"}.png`;
+
+      downloadLink.href =
+        canvas.toDataURL(
+          "image/png"
+        );
+
+      document.body.appendChild(
+        downloadLink
+      );
+
+      downloadLink.click();
+
+      document.body.removeChild(
+        downloadLink
+      );
+    }
+
+    function generateOnEnter(event) {
+      if (
+        event.key === "Enter"
+      ) {
+        generateCard();
+      }
+    }
+
+    generateBtn.addEventListener(
+      "click",
+      generateCard
+    );
+
+    downloadBtn.addEventListener(
+      "click",
+      downloadCard
+    );
+
+    firstNameInput.addEventListener(
+      "keydown",
+      generateOnEnter
+    );
+
+    lastNameInput.addEventListener(
+      "keydown",
+      generateOnEnter
+    );
+
+    drawPlaceholderCard();
+  </script>
+</body>
+</html>
