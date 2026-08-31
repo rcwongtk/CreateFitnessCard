@@ -18,20 +18,33 @@
     }
 
     :root {
-      --page-background: #0b0c0c;
-      --panel-background: rgba(20, 21, 21, 0.9);
-      --panel-border: rgba(255, 255, 255, 0.07);
+      /*
+       * Performance Station Brand Guide
+       * ---------------------------------
+       * Brand Gold:      #AF8952
+       * Background:      #0A0B0B
+       * Surface Charcoal:#181B1B
+       * Neutral Border:  #4A4D4C
+       * Primary Text:    #F5F3EE
+       * Secondary Text:  #A7AAA8
+       *
+       * Change --brand-primary (and, if desired, the neutral roles)
+       * to create a client-branded version. The generated card reads
+       * from these same variables, so the website and card stay matched.
+       */
+      --page-background: #0A0B0B;
+      --panel-background: #181B1B;
+      --panel-border: #4A4D4C;
 
-      --text-primary: #f3efe7;
-      --text-secondary: #b7b0a4;
-      --text-muted: #817c74;
+      --text-primary: #F5F3EE;
+      --text-secondary: #A7AAA8;
+      --text-muted: rgba(167, 170, 168, 0.68);
 
-      --accent-light: #d2b178;
-      --accent: #af8952;
-      --accent-dark: #725934;
+      --brand-primary: #AF8952;
+      --accent: var(--brand-primary);
 
-      --input-background: rgba(255, 255, 255, 0.035);
-      --input-border: rgba(255, 255, 255, 0.08);
+      --input-background: rgba(24, 27, 27, 0.78);
+      --input-border: rgba(74, 77, 76, 0.85);
 
       --shadow:
         0 24px 70px
@@ -58,19 +71,19 @@
       background:
         radial-gradient(
           circle at 8% 5%,
-          rgba(128, 109, 77, 0.2) 0%,
-          rgba(128, 109, 77, 0) 25%
+          rgba(175, 137, 82, 0.14) 0%,
+          rgba(175, 137, 82, 0) 25%
         ),
         radial-gradient(
           circle at 94% 92%,
-          rgba(79, 65, 44, 0.18) 0%,
-          rgba(79, 65, 44, 0) 24%
+          rgba(175, 137, 82, 0.08) 0%,
+          rgba(175, 137, 82, 0) 24%
         ),
         linear-gradient(
           140deg,
-          #080909 0%,
-          #141616 45%,
-          #090a0a 100%
+          var(--page-background) 0%,
+          var(--panel-background) 45%,
+          var(--page-background) 100%
         );
     }
 
@@ -114,7 +127,7 @@
       margin-bottom: 12px;
 
       color:
-        var(--accent-light);
+        var(--brand-primary);
 
       font-size: 0.74rem;
       font-weight: 800;
@@ -190,15 +203,15 @@
     }
 
     .field input::placeholder {
-      color: #68645f;
+      color: var(--text-muted);
     }
 
     .field input:focus {
       border-color:
-        rgba(175, 137, 82, 0.9);
+        var(--brand-primary);
 
       background:
-        rgba(255, 255, 255, 0.055);
+        rgba(24, 27, 27, 0.96);
 
       box-shadow:
         0 0 0 3px
@@ -249,14 +262,10 @@
     }
 
     .primary-btn {
-      color: #14110d;
+      color: var(--page-background);
 
       background:
-        linear-gradient(
-          135deg,
-          var(--accent-light),
-          var(--accent)
-        );
+        var(--brand-primary);
 
       box-shadow:
         0 14px 32px
@@ -275,15 +284,15 @@
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.08);
+        var(--panel-border);
 
       background:
-        rgba(255, 255, 255, 0.05);
+        var(--panel-background);
     }
 
     .secondary-btn:hover:not(:disabled) {
       background:
-        rgba(255, 255, 255, 0.075);
+        rgba(24, 27, 27, 0.86);
     }
 
     .account-information {
@@ -295,12 +304,12 @@
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.065);
+        rgba(74, 77, 76, 0.70);
 
       border-radius: 16px;
 
       background:
-        rgba(255, 255, 255, 0.028);
+        rgba(24, 27, 27, 0.72);
     }
 
     .account-label {
@@ -385,15 +394,15 @@
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.055);
+        rgba(74, 77, 76, 0.62);
 
       border-radius: 20px;
 
       background:
         linear-gradient(
           180deg,
-          rgba(255, 255, 255, 0.018),
-          rgba(255, 255, 255, 0.008)
+          rgba(24, 27, 27, 0.80),
+          rgba(10, 11, 11, 0.92)
         );
     }
 
@@ -596,6 +605,55 @@
 
     const ctx =
       canvas.getContext("2d");
+
+    /*
+     * One branding source for both the webpage and generated card.
+     * Update the CSS variables in :root and these values follow automatically.
+     */
+    const rootStyles =
+      getComputedStyle(document.documentElement);
+
+    const theme = {
+      background:
+        rootStyles.getPropertyValue("--page-background").trim(),
+      panel:
+        rootStyles.getPropertyValue("--panel-background").trim(),
+      border:
+        rootStyles.getPropertyValue("--panel-border").trim(),
+      textPrimary:
+        rootStyles.getPropertyValue("--text-primary").trim(),
+      textSecondary:
+        rootStyles.getPropertyValue("--text-secondary").trim(),
+      accent:
+        rootStyles.getPropertyValue("--brand-primary").trim()
+    };
+
+    function hexToRgba(hex, alpha) {
+      const normalized =
+        hex.replace("#", "").trim();
+
+      const expanded =
+        normalized.length === 3
+          ? normalized
+              .split("")
+              .map(character => character + character)
+              .join("")
+          : normalized;
+
+      const numericValue =
+        Number.parseInt(expanded, 16);
+
+      const red =
+        (numericValue >> 16) & 255;
+
+      const green =
+        (numericValue >> 8) & 255;
+
+      const blue =
+        numericValue & 255;
+
+      return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+    }
 
     let currentCard = null;
 
@@ -814,7 +872,7 @@ function buildQrPayload(accountId) {
 
       gradient.addColorStop(
         1,
-        "rgba(255,255,255,0)"
+        hexToRgba(color, 0)
       );
 
       ctx.fillStyle =
@@ -965,17 +1023,17 @@ function buildQrPayload(accountId) {
 
       backgroundGradient.addColorStop(
         0,
-        "#080909"
+        theme.background
       );
 
       backgroundGradient.addColorStop(
         0.48,
-        "#141616"
+        theme.panel
       );
 
       backgroundGradient.addColorStop(
         1,
-        "#080909"
+        theme.background
       );
 
       ctx.fillStyle =
@@ -992,7 +1050,7 @@ function buildQrPayload(accountId) {
         150,
         220,
         330,
-        "#756344",
+        theme.accent,
         0.16
       );
 
@@ -1000,7 +1058,7 @@ function buildQrPayload(accountId) {
         970,
         1670,
         390,
-        "#504029",
+        theme.accent,
         0.15
       );
 
@@ -1029,7 +1087,7 @@ function buildQrPayload(accountId) {
         cardWidth,
         cardHeight,
         cardRadius,
-        "#141616"
+        theme.panel
       );
 
       ctx.restore();
@@ -1057,17 +1115,17 @@ function buildQrPayload(accountId) {
 
       cardGradient.addColorStop(
         0,
-        "#1c1e1e"
+        theme.panel
       );
 
       cardGradient.addColorStop(
         0.42,
-        "#151717"
+        theme.panel
       );
 
       cardGradient.addColorStop(
         1,
-        "#101111"
+        theme.background
       );
 
       ctx.fillStyle =
@@ -1095,22 +1153,22 @@ function buildQrPayload(accountId) {
 
       topLighting.addColorStop(
         0,
-        "rgba(205,169,111,0.16)"
+        hexToRgba(theme.accent, 0.16)
       );
 
       topLighting.addColorStop(
         0.35,
-        "rgba(205,169,111,0.045)"
+        hexToRgba(theme.accent, 0.045)
       );
 
       topLighting.addColorStop(
         0.72,
-        "rgba(255,255,255,0.012)"
+        hexToRgba(theme.textPrimary, 0.012)
       );
 
       topLighting.addColorStop(
         1,
-        "rgba(255,255,255,0)"
+        hexToRgba(theme.textPrimary, 0)
       );
 
       ctx.fillStyle =
@@ -1127,7 +1185,7 @@ function buildQrPayload(accountId) {
         250,
         370,
         360,
-        "#8d7047",
+        theme.accent,
         0.08
       );
 
@@ -1135,7 +1193,7 @@ function buildQrPayload(accountId) {
         875,
         1430,
         430,
-        "#6b5536",
+        theme.accent,
         0.055
       );
 
@@ -1148,7 +1206,7 @@ function buildQrPayload(accountId) {
         cardWidth,
         cardHeight,
         cardRadius,
-        "rgba(255,255,255,0.075)",
+        hexToRgba(theme.border, 0.62),
         1.5
       );
 
@@ -1163,7 +1221,7 @@ function buildQrPayload(accountId) {
         190,
         8,
         4,
-        "#b9935b"
+        theme.accent
       );
 
       /*
@@ -1171,7 +1229,7 @@ function buildQrPayload(accountId) {
        */
 
       ctx.fillStyle =
-        "#aaa397";
+        theme.textSecondary;
 
       ctx.font =
         '800 24px "Segoe UI", Arial, sans-serif';
@@ -1196,11 +1254,11 @@ function buildQrPayload(accountId) {
         86,
         44,
         700,
-        "#f3efe7"
+        theme.textPrimary
       );
 
       ctx.fillStyle =
-        "#9d978d";
+        hexToRgba(theme.textSecondary, 0.88);
 
       ctx.font =
         '500 28px "Segoe UI", Arial, sans-serif';
@@ -1218,7 +1276,7 @@ function buildQrPayload(accountId) {
         580,
         2,
         1,
-        "rgba(255,255,255,0.08)"
+        hexToRgba(theme.border, 0.52)
       );
 
       /*
@@ -1235,7 +1293,7 @@ function buildQrPayload(accountId) {
         detailWidth,
         166,
         32,
-        "rgba(255,255,255,0.032)"
+        hexToRgba(theme.panel, 0.92)
       );
 
       strokeRoundRect(
@@ -1245,12 +1303,12 @@ function buildQrPayload(accountId) {
         detailWidth,
         166,
         32,
-        "rgba(255,255,255,0.052)",
+        hexToRgba(theme.border, 0.50),
         1.2
       );
 
       ctx.fillStyle =
-        "#8f897f";
+        hexToRgba(theme.textSecondary, 0.84);
 
       ctx.font =
         '800 23px "Segoe UI", Arial, sans-serif';
@@ -1276,7 +1334,7 @@ function buildQrPayload(accountId) {
         );
 
       ctx.fillStyle =
-        "#f3efe7";
+        theme.textPrimary;
 
       ctx.font =
         `700 ${accountFontSize}px Consolas, "Courier New", monospace`;
@@ -1294,7 +1352,7 @@ function buildQrPayload(accountId) {
         detailWidth,
         166,
         32,
-        "rgba(255,255,255,0.032)"
+        hexToRgba(theme.panel, 0.92)
       );
 
       strokeRoundRect(
@@ -1304,12 +1362,12 @@ function buildQrPayload(accountId) {
         detailWidth,
         166,
         32,
-        "rgba(255,255,255,0.052)",
+        hexToRgba(theme.border, 0.50),
         1.2
       );
 
       ctx.fillStyle =
-        "#8f897f";
+        hexToRgba(theme.textSecondary, 0.84);
 
       ctx.font =
         '800 23px "Segoe UI", Arial, sans-serif';
@@ -1331,7 +1389,7 @@ function buildQrPayload(accountId) {
         );
 
       ctx.fillStyle =
-        "#f3efe7";
+        theme.textPrimary;
 
       ctx.font =
         `600 ${dateFontSize}px "Segoe UI", Arial, sans-serif`;
@@ -1358,11 +1416,11 @@ function buildQrPayload(accountId) {
         qrPanelWidth,
         qrPanelHeight,
         40,
-        "#f2eee6"
+        theme.textPrimary
       );
 
       ctx.fillStyle =
-        "#181818";
+        theme.background;
 
       ctx.font =
         '800 29px "Segoe UI", Arial, sans-serif';
@@ -1381,8 +1439,8 @@ function buildQrPayload(accountId) {
           value: qrPayload,
           size: 760,
           level: "H",
-          background: "white",
-          foreground: "black"
+          background: theme.textPrimary,
+          foreground: theme.background
         });
 
       const qrSize = 410;
@@ -1402,7 +1460,7 @@ function buildQrPayload(accountId) {
       );
 
       ctx.fillStyle =
-        "#676159";
+        hexToRgba(theme.textSecondary, 0.72);
 
       ctx.font =
         '500 27px "Segoe UI", Arial, sans-serif';
